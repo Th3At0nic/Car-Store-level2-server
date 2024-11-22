@@ -1,7 +1,10 @@
+import express from 'express';
+import { CarController } from './car.controller';
 
-import Router from 'express';
+const router = express.Router();
 
-const router = Router();
+// Create a car
+router.post('/', CarController.createACar);
+router.get('/', CarController.getAllCars);
 
-
-// router.post()
+export const CarRoutes = router;
