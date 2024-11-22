@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { Car, CarCategory } from './car.interface';
+import { TCar, CarCategory } from './car.interface';
 
 //creating a schema based on the type Car
-const carSchema = new Schema<Car>({
+const carSchema = new Schema<TCar>({
   brand: { type: String, required: true },
   model: { type: String, required: true },
   year: { type: Number, required: true },
@@ -18,4 +18,4 @@ const carSchema = new Schema<Car>({
 });
 
 //creating a model based on the carSchema
-export const CarModel = model<Car>('Car', carSchema);
+export const CarModel = model<TCar>('Car', carSchema);

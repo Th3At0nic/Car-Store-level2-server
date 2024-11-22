@@ -1,4 +1,5 @@
-enum CarCategory { //using enum to define allowed car category
+//using enum to define allowed car category
+export enum CarCategory {
   Sedan = 'Sedan',
   SUV = 'SUV',
   Truck = 'Truck',
@@ -6,7 +7,7 @@ enum CarCategory { //using enum to define allowed car category
   Convertible = 'Convertible',
 }
 
-type Car = {
+export type TCar = {
   brand: string; // The brand or manufacturer of the car (such as: Toyota, BMW, Ford)
   model: string; // The model of the car (such as: Camry, 3 Series, Focus)
   year: number; // The year of manufacture
@@ -16,5 +17,3 @@ type Car = {
   quantity: number; // Quantity of the car available
   inStock: boolean; // Indicates if the car is in stock
 };
-
-export { Car, CarCategory };
