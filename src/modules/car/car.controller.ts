@@ -46,7 +46,7 @@ const getAllCars = async (req: Request, res: Response) => {
 // sending req to the service/DB to retrieving a specific car from the DB by ID
 const getACarById = async (req: Request, res: Response) => {
   try {
-    const carId = req.params.carId;
+    const carId: string = req.params.carId;
     // console.log("ekhane car id:",carId);
     // const result = null;
     const result = await CarService.getACarByIdFromDB(carId);
@@ -78,7 +78,7 @@ const getACarById = async (req: Request, res: Response) => {
 //request to the service/DB to find and update a car
 const updateACar = async (req: Request, res: Response) => {
   try {
-    const carId = req.params.carId;
+    const carId: string = req.params.carId;
     const updateData = req.body;
     const result = await CarService.updateACarIntoDB(carId, updateData);
 
@@ -106,9 +106,31 @@ const updateACar = async (req: Request, res: Response) => {
   }
 };
 
+//deleting a car from the db processing and send response to client
+const deleteACar = async (req: Request, res: Response) => {
+  try {
+    const carId: string = req.params.carId;
+    const result = await CarService.deleteACarFromDB(carId);
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully deleted the car with id: ${carId}`,
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'An error occur deleting the car!',
+      error: err,
+    });
+  }
+};
+
 export const CarController = {
   createACar,
   getAllCars,
   getACarById,
   updateACar,
+  deleteACar,
 };
