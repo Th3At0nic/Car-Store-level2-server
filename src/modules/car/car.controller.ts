@@ -53,7 +53,7 @@ const getACarById = async (req: Request, res: Response) => {
 
     //returning 404 not found if there is no car with the id
     if (!result) {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
         message: `Car with the id: ${carId} not found!`,
       });
@@ -84,7 +84,7 @@ const updateACar = async (req: Request, res: Response) => {
 
     //throwing error if the id is not found
     if (!result) {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
         message: `404 car not found with the id: ${carId}`,
       });
@@ -112,10 +112,17 @@ const deleteACar = async (req: Request, res: Response) => {
     const carId: string = req.params.carId;
     const result = await CarService.deleteACarFromDB(carId);
 
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: `404 car not found with the id ${carId}`,
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: `Successfully deleted the car with id: ${carId}`,
-      data: result,
+      data: {},
     });
   } catch (err) {
     console.log(err);
