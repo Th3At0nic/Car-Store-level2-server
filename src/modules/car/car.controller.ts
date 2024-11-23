@@ -75,8 +75,40 @@ const getACarById = async (req: Request, res: Response) => {
   }
 };
 
+//request to the service/DB to find and update a car
+const updateACar = async (req: Request, res: Response) => {
+  try {
+    const carId = req.params.carId;
+    const updateData = req.body;
+    const result = await CarService.updateACarIntoDB(carId, updateData);
+
+    //throwing error if the id is not found
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: `404 car not found with the id: ${carId}`,
+      });
+    }
+
+    //sending to client the result of find and update process
+    res.status(200).json({
+      success: true,
+      message: `Successfully updated the car with the id: ${carId}`,
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'An error occur updating the car!',
+      error: err,
+    });
+  }
+};
+
 export const CarController = {
   createACar,
   getAllCars,
   getACarById,
+  updateACar,
 };
