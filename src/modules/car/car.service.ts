@@ -23,8 +23,19 @@ const getAllCarsFromDB = async (car: TCar) => {
   }
 };
 
+const getACarByIdFromDB = async (carId: string) => {
+  try {
+    const result = await CarModel.findById(carId);
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw new Error('An error occur retrieving the car!' + err);
+  }
+};
+
 //exporting these functions wrapping as an object
 export const CarService = {
   createACarIntoDB,
   getAllCarsFromDB,
+  getACarByIdFromDB,
 };
