@@ -3,7 +3,7 @@ import { OrderService } from './order.service';
 import { AccType, ErrorType, orderValidationSchema } from './order.validation';
 
 // processing the req and  order and sending response to the client
-const createOrder = async (req: Request, res: Response) => {
+const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     //validating the order data
     const validation = orderValidationSchema.safeParse(req.body.order);
@@ -31,10 +31,10 @@ const createOrder = async (req: Request, res: Response) => {
         };
 
         return acc;
-      }, {});
+      }, {} as AccType);
 
       //sending failed response to the client
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         error: {
@@ -43,6 +43,7 @@ const createOrder = async (req: Request, res: Response) => {
         },
         stack: new Error().stack, // including the stack trace where the error is occuring actually
       });
+      return;
     }
 
     const { order } = req.body;
@@ -58,13 +59,13 @@ const createOrder = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'An error occur ordering the car!',
-      stack: err.stack,
+      stack: err instanceof Error ? err.stack : err,
     });
   }
 };
 
 // processing req of calculation of total revenue
-const calcRevenue = async (req: Request, res: Response) => {
+const calcRevenue = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await OrderService.calcRevenueFromOrders();
     res.status(200).json({
@@ -77,7 +78,7 @@ const calcRevenue = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'An error occur while calculating total revenue!',
-      stack: err.stack,
+      stack: err instanceof Error ? err.stack : err,
     });
   }
 };
