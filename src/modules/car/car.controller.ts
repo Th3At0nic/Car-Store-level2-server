@@ -1,31 +1,25 @@
 import { Request, Response } from 'express';
-// import { z } from 'zod';
 import { CarService } from './car.service';
-// import { carValidationSchema } from './car.validation';
+import { carValidationSchema } from './car.validation';
 
 // sending req to the service/DB to create a the cars into the DB
 const createACar = async (req: Request, res: Response) => {
   try {
-    // const validation = carValidationSchema.safeParse(req.body.car);
-
-    // if (!validation.success) {
-    //   // If validation fails, return errors
-    //   const formattedErrors = validation.error.errors.reduce(
-    //     (acc: { [key: string]: string }, error: z.ZodIssue) => {
-    //       acc[error.path[0]] = error.message;
-    //       return acc;
-    //     },
-    //     {},
-    //   );
-
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: 'Validation failed',
-    //     errors: formattedErrors,
-    //   });
-    // }
-
     const { car } = req.body;
+
+    // Validate car data using Zod
+    const parseResult = carValidationSchema.safeParse(car);
+
+    if (!parseResult.success) {
+      // If validation fails, return a 400 status with error details
+      res.status(400).json({
+        success: false,
+        message: 'Car data validation failed!',
+        errors: parseResult.error.errors,
+      });
+      return;
+    }
+
     const result = await CarService.createACarIntoDB(car);
 
     res.status(201).json({
