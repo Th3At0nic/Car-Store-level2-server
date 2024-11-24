@@ -14,7 +14,7 @@ const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
     const car = await CarModel.findById(order.car).session(session);
 
     if (!car) {
-      throw new Error('Car not found!');
+      throw new Error('404 Car not found!');
     }
     if (car.quantity < order.quantity && car.quantity >= 1) {
       throw new Error(

@@ -75,7 +75,7 @@ const getACarById = async (req: Request, res: Response) => {
     if (!result) {
       res.status(404).json({
         success: false,
-        message: `Car with the id: ${carId} not found!`,
+        message: `404 Car with the id: ${carId} not found!`,
       });
     }
 
