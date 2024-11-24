@@ -86,7 +86,7 @@ const getACarById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       success: false,
       message: 'An occur retrieving the car!',
@@ -118,7 +118,7 @@ const updateACar = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       success: false,
       message: 'An error occur updating the car!',
@@ -147,7 +147,7 @@ const deleteACar = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       success: false,
       message: 'An error occur deleting the car!',

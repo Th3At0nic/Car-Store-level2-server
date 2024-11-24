@@ -43,7 +43,7 @@ const getACarByIdFromDB = async (carId: string) => {
     const result = await CarModel.findById(carId);
     return result;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw new Error('An error occur retrieving the car!' + err);
   }
 };
@@ -57,7 +57,7 @@ const updateACarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
     //added {new: true} because it ensures: mongoose returns the new data, not the last updated data. without {new: true} it needs to try two times to get the new updated result
     return result;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw new Error('An error occur updating the car!' + err);
   }
 };
@@ -68,7 +68,7 @@ const deleteACarFromDB = async (carId: string) => {
     const result = await CarModel.findByIdAndDelete(carId);
     return result;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     throw new Error(`An error occur deleting the car with id: ${carId}` + err);
   }
 };
