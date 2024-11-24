@@ -48,7 +48,10 @@ const getAllCars = async (req: Request, res: Response) => {
   try {
     // const { car } = req.body;
     // console.log(car);
-    const result = await CarService.getAllCarsFromDB();
+    const searchTerm = req.query.searchTerm as string | undefined;
+
+    //querying on db
+    const result = await CarService.getAllCarsFromDB(searchTerm);
 
     res.status(201).json({
       success: true,

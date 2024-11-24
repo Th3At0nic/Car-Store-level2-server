@@ -13,9 +13,23 @@ const createACarIntoDB = async (car: TCar) => {
 };
 
 //retrieving all the car's collection from the DB
-const getAllCarsFromDB = async () => {
+const getAllCarsFromDB = async (searchTerm?: string) => {
   try {
-    const result = await CarModel.find();
+    let filter = {}; // Default to no filter, returning all cars if no search term is given
+
+    // If a searchTerm is provided, apply filter for brand, model, or category
+    if (searchTerm) {
+      filter = {
+        $or: [
+          { brand: { $regex: searchTerm, $options: 'i' } }, // case-insensitive match
+          { model: { $regex: searchTerm, $options: 'i' } },
+          { category: { $regex: searchTerm, $options: 'i' } },
+        ],
+      };
+    }
+
+    //querying on the db
+    const result = await CarModel.find(filter);
     return result;
   } catch (err) {
     // console.log(err);
