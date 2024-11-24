@@ -46,8 +46,9 @@ const createACar = async (req: Request, res: Response) => {
 // seding req to the service/DB to retrieving all the cars from the DB
 const getAllCars = async (req: Request, res: Response) => {
   try {
-    const { car } = req.body;
-    const result = await CarService.getAllCarsFromDB(car);
+    // const { car } = req.body;
+    // console.log(car);
+    const result = await CarService.getAllCarsFromDB();
 
     res.status(201).json({
       success: true,
@@ -137,7 +138,7 @@ const deleteACar = async (req: Request, res: Response) => {
     const result = await CarService.deleteACarFromDB(carId);
 
     if (!result) {
-       res.status(404).json({
+      res.status(404).json({
         success: false,
         message: `404 car not found with the id ${carId}`,
       });

@@ -13,9 +13,9 @@ const createACarIntoDB = async (car: TCar) => {
 };
 
 //retrieving all the car's collection from the DB
-const getAllCarsFromDB = async (car: TCar) => {
+const getAllCarsFromDB = async () => {
   try {
-    const result = await CarModel.find(car);
+    const result = await CarModel.find();
     return result;
   } catch (err) {
     // console.log(err);
