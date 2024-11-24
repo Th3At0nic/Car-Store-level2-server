@@ -1,14 +1,15 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
 
-// Define a type for the error structure
+// Defining a type for the error structure
 export type ErrorType = {
   path: string[];
   message: string;
   code: string;
-  minimum?: number; // Optional, as it might not always be present
+  minimum?: number;
 };
 
+//defining he type of accumulator in the reduce function/method in the orderController file
 export type AccType = {
   [key: string]: {
     message: string;
@@ -20,7 +21,7 @@ export type AccType = {
     };
     kind: string;
     path: string;
-    value: number; // This is the value causing the error (like `req.body.order.totalPrice`)
+    value: number;
   };
 };
 

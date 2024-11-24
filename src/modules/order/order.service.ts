@@ -96,8 +96,8 @@ const calcRevenueFromOrders = async () => {
     ]);
     return result;
   } catch (err) {
-    console.log(err);
-    throw new Error('An error occure while calculating total revenue');
+    // console.log(err);
+    throw new Error('An error occure while calculating total revenue' + err);
   }
 };
 

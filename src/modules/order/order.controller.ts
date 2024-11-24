@@ -55,7 +55,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       success: false,
       message: 'An error occur ordering the car!',
@@ -74,7 +74,7 @@ const calcRevenue = async (req: Request, res: Response): Promise<void> => {
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       success: false,
       message: 'An error occur while calculating total revenue!',
