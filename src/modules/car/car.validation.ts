@@ -1,4 +1,3 @@
-// src/modules/car/car.validation.ts
 import { z } from 'zod';
 import { CarCategory } from './car.interface';
 
