@@ -12,7 +12,6 @@ app.use('/api/cars', CarRoutes);
 
 //routing to the order router
 app.use('/api/orders', OrderRoutes);
-app.use('/api/orders', OrderRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
