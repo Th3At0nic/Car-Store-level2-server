@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CarService } from './car.service';
 import { carValidationSchema } from './car.validation';
+import { TCar } from './car.interface';
 
 // sending req to the service/DB to create a the cars into the DB
 const createACar = async (req: Request, res: Response) => {
@@ -77,6 +78,7 @@ const getACarById = async (req: Request, res: Response) => {
         success: false,
         message: `404 Car with the id: ${carId} not found!`,
       });
+      return;
     }
 
     //returning success message when the car is found
@@ -99,7 +101,7 @@ const getACarById = async (req: Request, res: Response) => {
 const updateACar = async (req: Request, res: Response) => {
   try {
     const carId: string = req.params.carId;
-    const updateData = req.body;
+    const updateData: Partial<TCar> = req.body;
 
     const result = await CarService.updateACarIntoDB(carId, updateData);
 
@@ -139,6 +141,7 @@ const deleteACar = async (req: Request, res: Response) => {
         success: false,
         message: `404 car not found with the id ${carId}`,
       });
+      return;
     }
 
     res.status(200).json({

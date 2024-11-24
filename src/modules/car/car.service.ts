@@ -53,6 +53,7 @@ const updateACarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
   try {
     const result = await CarModel.findByIdAndUpdate(carId, updateData, {
       new: true,
+      runValidators: true,
     });
     //added {new: true} because it ensures: mongoose returns the new data, not the last updated data. without {new: true} it needs to try two times to get the new updated result
     return result;

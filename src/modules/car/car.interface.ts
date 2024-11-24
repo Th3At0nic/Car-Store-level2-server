@@ -1,4 +1,5 @@
 //using enum to define allowed car category
+/* eslint-disable no-unused-vars */
 export enum CarCategory {
   Sedan = 'Sedan',
   SUV = 'SUV',
@@ -6,6 +7,7 @@ export enum CarCategory {
   Coupe = 'Coupe',
   Convertible = 'Convertible',
 }
+ 
 
 export type TCar = {
   brand: string; // The brand or manufacturer of the car (such as: Toyota, BMW, Ford)

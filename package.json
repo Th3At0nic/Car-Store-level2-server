@@ -9,7 +9,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint src",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint:fix": "eslint src --fix",
     "format": "prettier . --write"
   },
   "author": "",
