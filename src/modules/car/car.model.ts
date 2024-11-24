@@ -19,6 +19,7 @@ const carSchema = new Schema<TCar>(
   },
   {
     timestamps: true,
+    versionKey: false, // Disable the version key
   },
 );
 

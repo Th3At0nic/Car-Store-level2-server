@@ -14,7 +14,8 @@ const orderSchema = new Schema<TOrder>(
     totalPrice: { type: Number, required: true },
   },
   {
-    timestamps: true,
+    timestamps: true,  // shows the create and update time 
+    versionKey: false, // disable the version key
   },
 );
 
