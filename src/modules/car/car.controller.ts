@@ -111,6 +111,7 @@ const updateACar = async (req: Request, res: Response) => {
         success: false,
         message: `404 car not found with the id: ${carId}`,
       });
+      return;
     }
 
     //sending to client the result of find and update process
