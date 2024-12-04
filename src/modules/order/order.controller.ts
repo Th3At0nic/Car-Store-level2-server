@@ -6,7 +6,7 @@ import { AccType, ErrorType, orderValidationSchema } from './order.validation';
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     //validating the order data
-    const validation = orderValidationSchema.safeParse(req.body.order);
+    const validation = orderValidationSchema.safeParse(req.body);
 
     //this much code is just for matching the generic of error message of the assignment.
     if (!validation.success) {
@@ -15,7 +15,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
         validation.error.errors as ErrorType[]
       ).reduce<AccType>((acc, error) => {
         const { path, message, code, minimum } = error;
-        const invalidValue = req.body.order.totalPrice; //i had to access it like this because that price value is not being sent by the zod validator. had to fullfill the assignmtn condition
+        const invalidValue = req.body.totalPrice; //i had to access it like this because that price value is not being sent by the zod validator. had to fullfill the assignmtn condition
 
         acc[path[0]] = {
           message: message,
@@ -46,7 +46,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { order } = req.body;
+    const order = req.body;
     // console.log('ekhane order: ', order);
     const result = await OrderService.createOrderIntoDB(order);
     res.status(200).json({

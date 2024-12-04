@@ -6,7 +6,7 @@ import { TCar } from './car.interface';
 // sending req to the service/DB to create a the cars into the DB
 const createACar = async (req: Request, res: Response) => {
   try {
-    const { car } = req.body;
+    const car = req.body;
 
     // Validate car data using Zod
     const parseResult = carValidationSchema.safeParse(car);
