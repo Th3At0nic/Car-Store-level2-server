@@ -46,9 +46,9 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const order = req.body;
-    // console.log('ekhane order: ', order);
-    const result = await OrderService.createOrderIntoDB(order);
+    const validatedOrder = validation.data;
+    // console.log('ekhane order: ', validatedOrder);
+    const result = await OrderService.createOrderIntoDB(validatedOrder);
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',

@@ -11,6 +11,7 @@ const createACar = async (req: Request, res: Response) => {
     // Validate car data using Zod
     const parseResult = carValidationSchema.parse(car);
 
+    // const parseResult = carValidationSchema.safeParse(car);
     // if (!parseResult.success) {
     //   // If validation fails, return a 400 status with error details
     //   res.status(400).json({

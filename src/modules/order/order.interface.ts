@@ -1,10 +1,10 @@
 //creating a type name Order
 
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 export type TOrder = {
   email: string;
-  car: ObjectId;
+  car: Types.ObjectId;
   quantity: number;
   totalPrice: number;
 };
