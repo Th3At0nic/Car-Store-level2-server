@@ -11,25 +11,6 @@ const createACar = async (req: Request, res: Response) => {
     // Validate car data using Zod
     const parseResult = carValidationSchema.parse(car);
 
-    // const parseResult = carValidationSchema.safeParse(car);
-    // if (!parseResult.success) {
-    //   // If validation fails, return a 400 status with error details
-    //   res.status(400).json({
-    //     success: false,
-    //     message: 'Car data validation failed!',
-    //     errors: parseResult.error.errors,
-    //   });
-    //   return;
-    // }
-
-    if (parseResult.quantity <= 0 && parseResult.inStock === true) {
-      throw new Error("inStock can't be true while quantity is 0 or less");
-    }
-
-    if (parseResult.quantity >= 1 && parseResult.inStock === false) {
-      throw new Error("inStock can't be false while quantity is 1 or more");
-    }
-
     const result = await CarService.createACarIntoDB(parseResult);
 
     res.status(201).json({
@@ -47,11 +28,9 @@ const createACar = async (req: Request, res: Response) => {
   }
 };
 
-// seding req to the service/DB to retrieving all the cars from the DB
+// sending req to the service/DB to retrieving all the cars from the DB
 const getAllCars = async (req: Request, res: Response) => {
   try {
-    // const { car } = req.body;
-    // console.log(car);
     const searchTerm = req.query.searchTerm as string | undefined;
 
     //querying on db
