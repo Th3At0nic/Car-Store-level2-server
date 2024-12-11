@@ -22,6 +22,14 @@ const createACar = async (req: Request, res: Response) => {
     //   return;
     // }
 
+    if (parseResult.quantity <= 0 && parseResult.inStock === true) {
+      throw new Error("inStock can't be true while quantity is 0 or less");
+    }
+
+    if (parseResult.quantity >= 1 && parseResult.inStock === false) {
+      throw new Error("inStock can't be false while quantity is 1 or more");
+    }
+
     const result = await CarService.createACarIntoDB(parseResult);
 
     res.status(201).json({

@@ -1,4 +1,4 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { TOrder } from './order.interface';
 
 //creating the order schema bfrom the type Order
@@ -6,7 +6,7 @@ const orderSchema = new Schema<TOrder>(
   {
     email: { type: String, required: true },
     car: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Car',
       required: true,
     },
@@ -14,7 +14,7 @@ const orderSchema = new Schema<TOrder>(
     totalPrice: { type: Number, required: true },
   },
   {
-    timestamps: true,  // shows the create and update time 
+    timestamps: true, // shows the create and update time
     versionKey: false, // disable the version key
   },
 );
