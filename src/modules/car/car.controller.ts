@@ -9,19 +9,19 @@ const createACar = async (req: Request, res: Response) => {
     const car = req.body;
 
     // Validate car data using Zod
-    const parseResult = carValidationSchema.safeParse(car);
+    const parseResult = carValidationSchema.parse(car);
 
-    if (!parseResult.success) {
-      // If validation fails, return a 400 status with error details
-      res.status(400).json({
-        success: false,
-        message: 'Car data validation failed!',
-        errors: parseResult.error.errors,
-      });
-      return;
-    }
+    // if (!parseResult.success) {
+    //   // If validation fails, return a 400 status with error details
+    //   res.status(400).json({
+    //     success: false,
+    //     message: 'Car data validation failed!',
+    //     errors: parseResult.error.errors,
+    //   });
+    //   return;
+    // }
 
-    const result = await CarService.createACarIntoDB(car);
+    const result = await CarService.createACarIntoDB(parseResult);
 
     res.status(201).json({
       success: true,
