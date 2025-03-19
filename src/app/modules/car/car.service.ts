@@ -1,81 +1,134 @@
+import { Express } from 'express';
 import { CarModel } from './car.model';
 import { TCar } from './car.interface';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
+import throwAppError from '../../utils/throwAppError';
+import { StatusCodes } from 'http-status-codes';
+import { QueryBuilder } from '../../builder/QueryBuilder';
 
 //creating a car into the DB
-const createACarIntoDB = async (car: TCar) => {
-  try {
-    const result = await CarModel.create(car);
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error('An error occur creating a car' + err);
+const createACarIntoDB = async (files: Express.Multer.File[], car: TCar) => {
+  if (files && files.length > 0) {
+    const uploadedImages: string[] = [];
+
+    // Upload each file to Cloudinary
+    for (const file of files) {
+      const imgName = `${car.brand}${car.model}${car.year}-${Date.now()}`;
+      const imgPath = file.path;
+
+      const uploadImgResult = await sendImageToCloudinary(imgPath, imgName);
+      if (uploadImgResult?.secure_url) {
+        uploadedImages.push(uploadImgResult.secure_url);
+      }
+    }
+
+    // Store all uploaded image URLs
+    car.images = uploadedImages;
   }
+
+  const result = await CarModel.create(car);
+  if (!result) {
+    throwAppError(
+      'add-car',
+      "Couldn't add the car. Something went wrong.",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  return result;
 };
 
 //retrieving all the car's collection from the DB
-const getAllCarsFromDB = async (searchTerm?: string) => {
-  try {
-    let filter = {}; // Default to no filter, returning all cars if no search term is given
+const getAllCarsFromDB = async (query: Record<string, unknown>) => {
+  const carSearchableFields = ['brand', 'model', 'category'];
 
-    // If a searchTerm is provided, apply filter for brand, model, or category
-    if (searchTerm) {
-      filter = {
-        $or: [
-          { brand: { $regex: searchTerm, $options: 'i' } }, // case-insensitive match
-          { model: { $regex: searchTerm, $options: 'i' } },
-          { category: { $regex: searchTerm, $options: 'i' } },
-        ],
-      };
-    }
+  //querying on the db
+  const carQuery = new QueryBuilder(query, CarModel.find())
+    .search(carSearchableFields)
+    .filter()
+    .sortBy()
+    .paginate()
+    .fields();
 
-    //querying on the db
-    const result = await CarModel.find(filter);
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error('An error occur creating a car' + err);
+  const result = await carQuery.modelQuery;
+
+  if (!result.length) {
+    throwAppError('cars', 'No Car found in the system', StatusCodes.NOT_FOUND);
   }
+
+  const meta = await carQuery.countTotal();
+
+  return { meta, result };
 };
 
 //retrieving a specific car from the DB by an ID
 const getACarByIdFromDB = async (carId: string) => {
-  try {
-    const result = await CarModel.findById(carId);
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error('An error occur retrieving the car!' + err);
+  const result = await CarModel.findById(carId);
+
+  if (!result) {
+    throwAppError(
+      `carId: ${carId}`,
+      'Car not found with the provided carId.',
+      StatusCodes.NOT_FOUND,
+    );
   }
+  return result;
 };
 
 // updating  a specific car from the DB by an ID
 const updateACarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
-  try {
-    const result = await CarModel.findByIdAndUpdate(carId, updateData, {
-      new: true,
-      runValidators: true,
-    });
-    //added {new: true} because it ensures: mongoose returns the new data, not the last updated data. without {new: true} it needs to try two times to get the new updated result
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error('An error occur updating the car!' + err);
+  const isCarExists = await CarModel.findById(carId);
+
+  if (!isCarExists) {
+    throwAppError(
+      `carID: ${carId}`,
+      'Car not found with the provided id',
+      StatusCodes.NOT_FOUND,
+    );
   }
+
+  const result = await CarModel.findByIdAndUpdate(carId, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!result) {
+    throwAppError(
+      '',
+      "Couldn't update the car. Something went wrong",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  return result;
 };
 
 //deleting a specific car from the DB by an ID
 const deleteACarFromDB = async (carId: string) => {
-  try {
-    const result = await CarModel.findByIdAndDelete(carId);
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error(`An error occur deleting the car with id: ${carId}` + err);
+  const isCarExists = await CarModel.findById(carId);
+
+  if (!isCarExists) {
+    throwAppError(
+      `carID: ${carId}`,
+      'Car not found with the provided id',
+      StatusCodes.NOT_FOUND,
+    );
   }
+
+  const result = await CarModel.findByIdAndDelete(carId);
+
+  if (!result) {
+    throwAppError(
+      '',
+      "Couldn't delete the car. Something went wrong",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+  return result;
 };
 
 //exporting these functions wrapping as an object
-export const CarService = {
+export const CarServices = {
   createACarIntoDB,
   getAllCarsFromDB,
   getACarByIdFromDB,

@@ -39,6 +39,7 @@ const carSchema = new Schema<TCar>(
       required: true,
     },
     inStock: { type: Boolean, required: true },
+    images: { type: [String], required: true },
   },
   {
     timestamps: true,

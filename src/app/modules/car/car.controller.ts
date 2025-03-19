@@ -1,154 +1,62 @@
+import { Express } from 'express';
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response } from 'express';
-import { CarService } from './car.service';
-import { carValidationSchema } from './car.validation';
+import { CarServices } from './car.service';
 import { TCar } from './car.interface';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { StatusCodes } from 'http-status-codes';
 
-// sending req to the service/DB to create a the cars into the DB
-const createACar = async (req: Request, res: Response) => {
-  try {
-    const car = req.body;
+const createACar = catchAsync(async (req, res, next) => {
+  const files = req.files as Express.Multer.File[];
 
-    // Validate car data using Zod
-    const parseResult = carValidationSchema.parse(car);
+  const result = await CarServices.createACarIntoDB(files, req.body);
+  const message = 'Added the Car Successfully!';
 
-    const result = await CarService.createACarIntoDB(parseResult);
-
-    res.status(201).json({
-      success: true,
-      message: 'A car is created successfully!',
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur creating a car!',
-      error: err,
-    });
-  }
-};
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
 
 // sending req to the service/DB to retrieving all the cars from the DB
-const getAllCars = async (req: Request, res: Response) => {
-  try {
-    const searchTerm = req.query.searchTerm as string | undefined;
+const getAllCars = catchAsync(async (req: Request, res: Response) => {
+  const result = await CarServices.getAllCarsFromDB(req.query);
 
-    //querying on db
-    const result = await CarService.getAllCarsFromDB(searchTerm);
-
-    res.status(201).json({
-      success: true,
-      message: 'All cars are retrieved successfully!',
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur retrieving a car!',
-      error: err,
-    });
-  }
-};
+  const message = 'Retrieved the Car Successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result.result, result.meta);
+});
 
 // sending req to the service/DB to retrieving a specific car from the DB by ID
-const getACarById = async (req: Request, res: Response) => {
-  try {
-    const carId: string = req.params.carId;
-    // console.log("ekhane car id:",carId);
+const getACarById = catchAsync(async (req: Request, res: Response) => {
+  const carId: string = req.params.carId;
 
-    // const result = null;
-    const result = await CarService.getACarByIdFromDB(carId);
+  const result = await CarServices.getACarByIdFromDB(carId);
 
-    //returning 404 not found if there is no car with the id
-    if (!result) {
-      res.status(404).json({
-        success: false,
-        message: `404 Car with the id: ${carId} not found!`,
-      });
-      return;
-    }
-
-    //returning success message when the car is found
-    res.status(200).json({
-      success: true,
-      message: `The car with an id: ${carId} is retrieved successfully!`,
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An occur retrieving the car!',
-      error: err,
-    });
-  }
-};
+  const message = 'The Car is Retrieved Successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
 
 //request to the service/DB to find and update a car
-const updateACar = async (req: Request, res: Response) => {
-  try {
-    const carId: string = req.params.carId;
-    const updateData: Partial<TCar> = req.body;
+const updateACar = catchAsync(async (req: Request, res: Response) => {
+  const carId: string = req.params.carId;
+  const updateData: Partial<TCar> = req.body;
 
-    const result = await CarService.updateACarIntoDB(carId, updateData);
-
-    //throwing error if the id is not found
-    if (!result) {
-      res.status(404).json({
-        success: false,
-        message: `404 car not found with the id: ${carId}`,
-      });
-      return;
-    }
-
-    //sending to client the result of find and update process
-    res.status(200).json({
-      success: true,
-      message: `Successfully updated the car with the id: ${carId}`,
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur updating the car!',
-      error: err,
-    });
-  }
-};
+  const result = await CarServices.updateACarIntoDB(carId, updateData);
+  const message = 'Updated the Car Successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
 
 //deleting a car from the db processing and send response to client
 const deleteACar = async (req: Request, res: Response) => {
-  try {
-    const carId: string = req.params.carId;
+  const carId: string = req.params.carId;
 
-    const result = await CarService.deleteACarFromDB(carId);
+  const result = await CarServices.deleteACarFromDB(carId);
 
-    if (!result) {
-      res.status(404).json({
-        success: false,
-        message: `404 car not found with the id ${carId}`,
-      });
-      return;
-    }
+  const message = 'Deleted the Car Successfully';
 
-    res.status(200).json({
-      success: true,
-      message: `Successfully deleted the car with id: ${carId}`,
-      data: {},
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur deleting the car!',
-      error: err,
-    });
-  }
+  sendResponse(res, StatusCodes.OK, true, message, result ? null : result);
 };
 
-export const CarController = {
+export const CarControllers = {
   createACar,
   getAllCars,
   getACarById,
