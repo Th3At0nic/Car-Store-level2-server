@@ -120,7 +120,7 @@ const deleteACarFromDB = async (carId: string) => {
   if (!result) {
     throwAppError(
       '',
-      "Couldn't delete the car. Something went wrong. hahaha",
+      "Couldn't delete the car. Something went wrong",
       StatusCodes.INTERNAL_SERVER_ERROR,
     );
   }
