@@ -1,9 +1,11 @@
 import { UserModel } from '../user/user.model';
-import { TLoginUser } from './auth.interface';
+import { TChangePassData, TLoginUser } from './auth.interface';
 import throwAppError from '../../utils/throwAppError';
 import { StatusCodes } from 'http-status-codes';
 import { generateToken } from './auth.utils';
 import config from '../../config';
+import bcrypt from 'bcrypt';
+import { JwtPayload } from 'jsonwebtoken';
 
 const loginUserAuth = async (payload: TLoginUser) => {
   const { email, password: userGivenPassword } = payload;
@@ -55,6 +57,62 @@ const loginUserAuth = async (payload: TLoginUser) => {
   };
 };
 
+const changePasswordIntoDB = async (
+  userData: JwtPayload,
+  payload: TChangePassData,
+) => {
+  const user = await UserModel.isUserExists(userData.userEmail);
+
+  if (!user) {
+    throwAppError(
+      'email',
+      `The User with the email: ${userData.userEmail} not found in the system.`,
+      StatusCodes.NOT_FOUND,
+    );
+  }
+
+  if (user?.deactivated) {
+    throwAppError(
+      'deactivated',
+      `User Account with the email: ${userData.userEmail} is Deactivated.`,
+      StatusCodes.BAD_REQUEST,
+    );
+  }
+
+  const isOldPasswordValid = await UserModel.isPasswordCorrect(
+    payload.oldPassword,
+    user?.password as string,
+  );
+
+  if (!isOldPasswordValid) {
+    throwAppError(
+      'password',
+      'Invalid Credentials. Old password is incorrect. Please try again.',
+      StatusCodes.BAD_REQUEST,
+    );
+  }
+
+  //hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_round_salt),
+  );
+
+  const result = await UserModel.findOneAndUpdate(
+    {
+      email: userData.userEmail,
+      role: userData.role,
+    },
+    {
+      password: newHashedPassword,
+    },
+    { new: true },
+  );
+
+  return result ? {} : undefined;
+};
+
 export const LoginUserServices = {
   loginUserAuth,
+  changePasswordIntoDB,
 };
