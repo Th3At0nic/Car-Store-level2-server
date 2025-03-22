@@ -32,12 +32,26 @@ const toggleUserStatusByAdminIntoDB = async (userId: string) => {
 };
 
 const getAllOrdersFromDB = async () => {
-  const result = await OrderModel.find();
+  const result = await OrderModel.find().populate('car');
 
   if (!result.length) {
     throwAppError(
       'orders',
       'No Orders found in the system',
+      StatusCodes.NOT_FOUND,
+    );
+  }
+
+  return result;
+};
+
+const getAnOrderFromDB = async (orderId: string) => {
+  const result = await OrderModel.findById(orderId).populate('car');
+
+  if (!result) {
+    throwAppError(
+      'orders',
+      'Order Not Found in the System',
       StatusCodes.NOT_FOUND,
     );
   }
@@ -115,9 +129,25 @@ const getAllUsersFromDB = async () => {
   return result;
 };
 
+const deleteOrderFromDB = async (orderId: string) => {
+  const result = await OrderModel.findByIdAndDelete(orderId);
+
+  if (!result) {
+    throwAppError(
+      'params.orderId',
+      "Something went wrong. Couldn't Delete the order",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  return result;
+};
+
 export const AdminServices = {
   toggleUserStatusByAdminIntoDB,
   getAllOrdersFromDB,
+  getAnOrderFromDB,
   calcRevenueFromOrders,
   getAllUsersFromDB,
+  deleteOrderFromDB,
 };
