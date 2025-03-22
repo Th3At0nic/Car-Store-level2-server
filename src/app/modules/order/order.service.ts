@@ -6,8 +6,15 @@ import throwAppError from '../../utils/throwAppError';
 import { StatusCodes } from 'http-status-codes';
 
 //creating an order to DB
-const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
+const createOrderWithInventoryManagementIntoDB = async (
+  userEmail: string,
+  order: TOrder,
+) => {
   const session = await mongoose.startSession(); // creating a session from the mongoose
+
+  //assigning email to the order data
+  order.email = userEmail;
+
   try {
     //starting a transaction with the session which allow us to execute multiple opt together, or cancel together.
     session.startTransaction();
@@ -67,6 +74,17 @@ const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
   }
 };
 
+const getMyOrdersFromDB = async (userEmail: string) => {
+  const result = await OrderModel.find({ email: userEmail });
+
+  if (!result.length) {
+    throwAppError('', 'Currently You have no Orders', StatusCodes.NOT_FOUND);
+  }
+
+  return result;
+};
+
 export const OrderService = {
   createOrderWithInventoryManagementIntoDB,
+  getMyOrdersFromDB,
 };

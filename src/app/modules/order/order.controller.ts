@@ -1,74 +1,40 @@
-import { Request, Response } from 'express';
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { OrderService } from './order.service';
-import { AccType, ErrorType, orderValidationSchema } from './order.validation';
+import catchAsync from '../../utils/catchAsync';
+import { StatusCodes } from 'http-status-codes';
+import sendResponse from '../../utils/sendResponse';
+import { JwtPayload } from 'jsonwebtoken';
 
 // processing the req and  order and sending response to the client
-const createOrderWithInventoryManagement = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    //validating the order data
-    const validation = orderValidationSchema.safeParse(req.body);
+const createOrderWithInventoryManagement = catchAsync(
+  async (req, res, next) => {
+    const { userEmail } = req.user as JwtPayload;
 
-    //this much code is just for matching the generic of error message of the assignment.
-    if (!validation.success) {
-      //reduce method works as reducing the array by iterating on each array of errors and accumulate them into a single formatted object
-      const formattedErrors = (
-        validation.error.errors as ErrorType[]
-      ).reduce<AccType>((acc, error) => {
-        const { path, message, code, minimum } = error;
-        const invalidValue = req.body.totalPrice; //i had to access it like this because that price value is not being sent by the zod validator. had to fullfill the assignmtn condition
+    const result = await OrderService.createOrderWithInventoryManagementIntoDB(
+      userEmail,
+      req.body,
+    );
 
-        acc[path[0]] = {
-          message: message,
-          name: 'ValidatorError', // You can set the error name as required
-          properties: {
-            message: message,
-            type: code, // Use the validation code as the type
-            min: minimum, // For example, if it's a "min" validation
-          },
-          kind: code, // Use the validation code as the kind
-          path: path.join('.'), // Convert path array to a string (e.g., 'price')
-          value: invalidValue, // The value that was received
-        };
+    sendResponse(
+      res,
+      StatusCodes.OK,
+      true,
+      'Order Placed Successfully',
+      result,
+    );
+  },
+);
 
-        return acc;
-      }, {} as AccType);
+const getMyOrders = catchAsync(async (req, res, next) => {
+  const { userEmail } = req.user as JwtPayload;
+  const result = await OrderService.getMyOrdersFromDB(userEmail);
 
-      //sending failed response to the client
-      res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        error: {
-          name: 'ValidationError',
-          errors: formattedErrors, // inserting the formatted errors here
-        },
-        stack: new Error().stack, // including the stack trace where the error is occuring actually
-      });
-      return;
-    }
-
-    const validatedOrder = validation.data;
-    const result =
-      await OrderService.createOrderWithInventoryManagementIntoDB(
-        validatedOrder,
-      );
-    res.status(200).json({
-      success: true,
-      message: 'Order created successfully!',
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur ordering the car!',
-      stack: err instanceof Error ? err.stack : err,
-    });
-  }
-};
+  const message = 'My Orders retrieved Successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
 
 export const OrderController = {
   createOrderWithInventoryManagement,
+  getMyOrders,
 };
