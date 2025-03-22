@@ -20,6 +20,14 @@ const loginUserAuth = async (payload: TLoginUser) => {
     );
   }
 
+  if (user?.deactivated) {
+    throwAppError(
+      'deactivated',
+      'Your account is deactivated by admin. To login your account, contact admin to activate your account first',
+      StatusCodes.FORBIDDEN,
+    );
+  }
+
   const isPasswordValid = await UserModel.isPasswordCorrect(
     userGivenPassword,
     user?.password as string,
