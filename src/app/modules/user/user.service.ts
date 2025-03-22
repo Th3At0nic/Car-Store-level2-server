@@ -10,6 +10,7 @@ const registerUserIntoDB = async (payload: TUser) => {
     email: payload.email,
     password: payload.password,
     role: USER_ROLE.user,
+    deactivated: false,
   };
 
   //preventing duplicate creation of student

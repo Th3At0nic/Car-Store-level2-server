@@ -29,12 +29,8 @@ export const auth = (...requiredRoles: TUserRole[]) => {
         config.jwt_access_secret as string,
       );
 
-      // decoded undefined
-      const userDecoded = decoded as JwtPayload;
-      console.log('userDecoded from authRequest: ', userDecoded);
-
       const {
-        userId,
+        userEmail,
         role,
         // iat
       } = decoded as JwtPayload;
@@ -47,12 +43,12 @@ export const auth = (...requiredRoles: TUserRole[]) => {
         );
       }
 
-      const user = await UserModel.isUserExists(userId);
+      const user = await UserModel.isUserExists(userEmail);
 
       if (!user) {
         throwAppError(
           'id',
-          `The ${role} with the provided ID: ${userId} not found in the system. Please recheck the ID and try again`,
+          `The ${role} with the provided ID: ${userEmail} not found in the system. Please recheck the ID and try again`,
           StatusCodes.UNAUTHORIZED,
         );
       }

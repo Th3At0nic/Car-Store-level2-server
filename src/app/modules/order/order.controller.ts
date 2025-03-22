@@ -3,7 +3,10 @@ import { OrderService } from './order.service';
 import { AccType, ErrorType, orderValidationSchema } from './order.validation';
 
 // processing the req and  order and sending response to the client
-const createOrder = async (req: Request, res: Response): Promise<void> => {
+const createOrderWithInventoryManagement = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     //validating the order data
     const validation = orderValidationSchema.safeParse(req.body);
@@ -47,8 +50,10 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
     }
 
     const validatedOrder = validation.data;
-    // console.log('ekhane order: ', validatedOrder);
-    const result = await OrderService.createOrderIntoDB(validatedOrder);
+    const result =
+      await OrderService.createOrderWithInventoryManagementIntoDB(
+        validatedOrder,
+      );
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',
@@ -64,26 +69,6 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// processing req of calculation of total revenue
-const calcRevenue = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const result = await OrderService.calcRevenueFromOrders();
-    res.status(200).json({
-      success: true,
-      message: 'Successfully calculated total revenue!',
-      data: result,
-    });
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'An error occur while calculating total revenue!',
-      stack: err instanceof Error ? err.stack : err,
-    });
-  }
-};
-
 export const OrderController = {
-  createOrder,
-  calcRevenue,
+  createOrderWithInventoryManagement,
 };

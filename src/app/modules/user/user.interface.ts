@@ -7,6 +7,7 @@ export type TUser = {
   email: string;
   password: string;
   role: 'admin' | 'user';
+  deactivated: boolean;
 };
 
 export interface IUser extends Model<TUser> {

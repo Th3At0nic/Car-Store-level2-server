@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { TOrder } from './order.interface';
 import { OrderModel } from './order.model';
 import { CarModel } from '../car/car.model';
+import throwAppError from '../../utils/throwAppError';
+import { StatusCodes } from 'http-status-codes';
 
 //creating an order to DB
 const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
@@ -14,24 +16,31 @@ const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
     const car = await CarModel.findById(order.car).session(session);
 
     if (!car) {
-      throw new Error('404 Car not found!');
+      throwAppError(
+        'car',
+        'The car not found with the car id',
+        StatusCodes.NOT_FOUND,
+      );
     }
-    if (car.quantity < order.quantity && car.quantity >= 1) {
-      throw new Error(
-        `Insufficient stock! Only ${car.quantity} unit available.`,
+
+    if (car!.quantity < order.quantity && car!.quantity >= 1) {
+      throwAppError(
+        'quantity',
+        `Insufficient stock! Only ${car?.quantity} unit available. But you ordered ${order.quantity} unit`,
+        StatusCodes.UNPROCESSABLE_ENTITY,
       );
     }
 
     // reducing the order quantity from the car quantity and assigning the new quantity to the car quantity
-    car.quantity -= order.quantity;
+    car!.quantity -= order.quantity;
 
     //updating the car inStock status
-    if (car.quantity === 0) {
-      car.inStock = false;
+    if (car?.quantity === 0) {
+      car!.inStock = false;
     }
 
     // saving the updated car details into the DB with the session
-    await car.save({ session });
+    await car?.save({ session });
 
     //creating a new order in the DB
     const result = await OrderModel.create([order], { session });
@@ -50,58 +59,14 @@ const createOrderWithInventoryManagementIntoDB = async (order: TOrder) => {
 
     session.endSession();
 
-    throw new Error('An error occur ordering a car!' + err);
-  }
-};
-
-//
-//
-//
-//
-//
-//
-// calculating the total revenue from orders
-const calcRevenueFromOrders = async () => {
-  try {
-    const result = await OrderModel.aggregate([
-      {
-        $lookup: {
-          from: 'cars', // connecting with the cars collection from the order collection in the db to access its value,
-          localField: 'car', // The field in the current orders collection that holds the car id
-          foreignField: '_id', // The field in the cars collection that holds the car id
-          as: 'carDetails', // The result of the lookup will be stored here (carDetails)
-        },
-      },
-      {
-        $unwind: '$carDetails', // Unwind to get individual car documents to access car's price
-      },
-      {
-        $project: {
-          totalRevenue: { $multiply: ['$carDetails.price', '$quantity'] },
-          // Calculating revenue for each order, taking the each car price from the car document and taking the quantity of that car order from the orders, and then multiplying the the unit price and the order quantity.
-        },
-      },
-      {
-        $group: {
-          _id: null, // _id is nothing so that it will Group all documents into a single group
-          totalRevenue: { $sum: '$totalRevenue' }, // Sum the total revenue
-        },
-      },
-      {
-        $project: {
-          _id: 0, // value 0 is to hide _id frm the output
-          totalRevenue: 1, // 1 means show totalRevenue in the output
-        },
-      },
-    ]);
-    return result;
-  } catch (err) {
-    // console.log(err);
-    throw new Error('An error occure while calculating total revenue' + err);
+    throwAppError(
+      '',
+      `An error occur ordering a car! + ${err}`,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
   }
 };
 
 export const OrderService = {
-  createOrderIntoDB: createOrderWithInventoryManagementIntoDB,
-  calcRevenueFromOrders,
+  createOrderWithInventoryManagementIntoDB,
 };
