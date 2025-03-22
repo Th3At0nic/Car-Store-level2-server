@@ -6,6 +6,7 @@ import { OrderModel } from '../order/order.model';
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 import { CarModel } from '../car/car.model';
 import { TCar } from '../car/car.interface';
+import { TOrder } from '../order/order.interface';
 
 //creating a car into the DB
 const createACarIntoDB = async (files: Express.Multer.File[], car: TCar) => {
@@ -231,6 +232,63 @@ const deleteOrderFromDB = async (orderId: string) => {
   return result;
 };
 
+const updateOrderStatusIntoDB = async (
+  orderId: string,
+  payload: Pick<TOrder, 'status'>,
+) => {
+  const isOrderExists = await OrderModel.findById(orderId);
+
+  if (!isOrderExists) {
+    throwAppError(
+      'orderId',
+      'Order not Found in the System.',
+      StatusCodes.NOT_FOUND,
+    );
+  }
+
+  if (isOrderExists?.status === 'Delivered') {
+    throwAppError(
+      'status',
+      `The Order is Already Delivered. Can't change status anymore.`,
+      StatusCodes.BAD_REQUEST,
+    );
+  } else if (
+    (isOrderExists?.status === 'Pending' && payload.status === 'Shipped') ||
+    (isOrderExists?.status === 'Pending' && payload.status === 'Delivered') ||
+    (isOrderExists?.status === 'Processing' && payload.status === 'Delivered')
+  ) {
+    throwAppError(
+      'status',
+      `Invalid Status flow. A ${isOrderExists.status} order can't be ${payload.status} directly. Must follow the sequence: Pending → Processing → Shipped → Delivered.`,
+      StatusCodes.FORBIDDEN,
+    );
+  } else if (
+    isOrderExists?.status === 'Shipped' &&
+    payload.status === 'Processing'
+  ) {
+    throwAppError(
+      'status',
+      `Shipped order can't backward to "Processing".`,
+      StatusCodes.FORBIDDEN,
+    );
+  }
+
+  const result = await OrderModel.findByIdAndUpdate(orderId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!result) {
+    throwAppError(
+      'orderId',
+      "Something went Wrong. Couldn't Update the Order Status",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  return result;
+};
+
 export const AdminServices = {
   createACarIntoDB,
   updateACarIntoDB,
@@ -241,4 +299,5 @@ export const AdminServices = {
   calcRevenueFromOrders,
   getAllUsersFromDB,
   deleteOrderFromDB,
+  updateOrderStatusIntoDB,
 };

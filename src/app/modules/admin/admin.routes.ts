@@ -8,6 +8,7 @@ import {
   updateCarValidationSchema,
 } from '../car/car.validation';
 import { validateRequest } from '../../middlewares/validateRequest';
+import { updateOrderStatusValidationSchema } from '../order/order.validation';
 
 const router = Router();
 
@@ -58,6 +59,13 @@ router.delete(
   '/orders/:orderId',
   auth(USER_ROLE.admin),
   AdminControllers.deleteOrder,
+);
+
+router.patch(
+  '/orders/:orderId',
+  auth(USER_ROLE.admin),
+  validateRequest(updateOrderStatusValidationSchema),
+  AdminControllers.updateOrderStatus,
 );
 
 export const AdminRoutes = router;

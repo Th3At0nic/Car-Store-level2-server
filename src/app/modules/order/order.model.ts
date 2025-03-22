@@ -12,6 +12,11 @@ const orderSchema = new Schema<TOrder>(
     },
     quantity: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
+    status: {
+      type: String,
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
+      required: true,
+    },
   },
   {
     timestamps: true, // shows the create and update time

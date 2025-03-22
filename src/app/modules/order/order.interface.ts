@@ -7,4 +7,5 @@ export type TOrder = {
   car: Types.ObjectId;
   quantity: number;
   totalPrice: number;
+  status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered';
 };

@@ -12,9 +12,6 @@ const createOrderWithInventoryManagementIntoDB = async (
 ) => {
   const session = await mongoose.startSession(); // creating a session from the mongoose
 
-  //assigning email to the order data
-  order.email = userEmail;
-
   try {
     //starting a transaction with the session which allow us to execute multiple opt together, or cancel together.
     session.startTransaction();
@@ -48,6 +45,10 @@ const createOrderWithInventoryManagementIntoDB = async (
 
     // saving the updated car details into the DB with the session
     await car?.save({ session });
+
+    //assigning email and status to the order data
+    order.email = userEmail;
+    order.status = 'Pending';
 
     //creating a new order in the DB
     const result = await OrderModel.create([order], { session });

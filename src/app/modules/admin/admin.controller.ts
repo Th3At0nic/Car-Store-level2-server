@@ -83,6 +83,14 @@ const deleteOrder = catchAsync(async (req, res, next) => {
   sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
+const updateOrderStatus = catchAsync(async (req, res, next) => {
+  const { orderId } = req.params;
+  const result = await AdminServices.updateOrderStatusIntoDB(orderId, req.body);
+  const message = 'Order Status Updated Successfully';
+
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
+
 export const AdminControllers = {
   createACar,
   updateACar,
@@ -93,4 +101,5 @@ export const AdminControllers = {
   calcRevenue,
   getAllUsers,
   deleteOrder,
+  updateOrderStatus,
 };
