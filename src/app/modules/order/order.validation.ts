@@ -16,9 +16,6 @@ export const orderValidationSchema = z.object({
     quantity: z
       .number()
       .positive({ message: 'Quantity must be a positive number' }),
-    totalPrice: z
-      .number()
-      .positive({ message: 'Total price must be a positive number' }),
   }),
 });
 

@@ -51,6 +51,7 @@ const createOrderWithInventoryManagementIntoDB = async (
 
     order.email = userEmail;
     order.status = 'Pending';
+    order.totalPrice = Number(car?.price) * Number(order.quantity);
     order.estimatedDeliveryStart = new Date(
       now.getTime() + 2 * 24 * 60 * 60 * 1000,
     ); // 2 days later of Order placement date
