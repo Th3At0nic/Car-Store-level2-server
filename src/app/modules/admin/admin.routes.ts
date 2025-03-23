@@ -13,7 +13,7 @@ import { updateOrderStatusValidationSchema } from '../order/order.validation';
 const router = Router();
 
 router.post(
-  '/add-car',
+  '/cars/add-car',
   auth(USER_ROLE.admin),
   upload.array('files', 5),
   (req: Request, res: Response, next: NextFunction) => {
@@ -25,13 +25,13 @@ router.post(
 );
 
 router.put(
-  '/:carId',
+  '/cars/:carId',
   auth(USER_ROLE.admin),
   validateRequest(updateCarValidationSchema),
   AdminControllers.updateACar,
 );
 
-router.delete('/:carId', auth(USER_ROLE.admin), AdminControllers.deleteACar);
+router.delete('/cars/:carId', auth(USER_ROLE.admin), AdminControllers.deleteACar);
 
 router.patch(
   '/users/:userId',
