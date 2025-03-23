@@ -8,4 +8,6 @@ export type TOrder = {
   quantity: number;
   totalPrice: number;
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered';
+  estimatedDeliveryStart: Date;
+  estimatedDeliveryEnd: Date;
 };

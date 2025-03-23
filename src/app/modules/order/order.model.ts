@@ -17,6 +17,8 @@ const orderSchema = new Schema<TOrder>(
       enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
       required: true,
     },
+    estimatedDeliveryStart: { type: Date, required: true },
+    estimatedDeliveryEnd: { type: Date, required: true },
   },
   {
     timestamps: true, // shows the create and update time

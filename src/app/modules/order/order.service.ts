@@ -47,8 +47,17 @@ const createOrderWithInventoryManagementIntoDB = async (
     await car?.save({ session });
 
     //assigning email and status to the order data
+    const now = new Date();
+
     order.email = userEmail;
     order.status = 'Pending';
+    order.estimatedDeliveryStart = new Date(
+      now.getTime() + 2 * 24 * 60 * 60 * 1000,
+    ); // 2 days later of Order placement date
+
+    order.estimatedDeliveryEnd = new Date(
+      now.getTime() + 12 * 24 * 60 * 60 * 1000,
+    ); // 12 days later
 
     //creating a new order in the DB
     const result = await OrderModel.create([order], { session });
