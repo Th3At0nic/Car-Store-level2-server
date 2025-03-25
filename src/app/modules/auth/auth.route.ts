@@ -3,6 +3,7 @@ import { validateRequest } from '../../middlewares/validateRequest';
 import {
   changePasswordValidationSchema,
   loginUserValidationSchema,
+  refreshTokenValidationSchema,
 } from './auth.validation';
 import { LoginUserControllers } from './auth.controller';
 import { UserValidationSchema } from '../user/user.validation';
@@ -23,6 +24,12 @@ router.post(
   auth(USER_ROLE.admin, USER_ROLE.user),
   validateRequest(changePasswordValidationSchema),
   LoginUserControllers.changePassword,
+);
+
+router.post(
+  '/refresh-token',
+  validateRequest(refreshTokenValidationSchema),
+  LoginUserControllers.createNewAccessTokenByRefreshToken,
 );
 
 router.post(
