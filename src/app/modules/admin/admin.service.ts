@@ -246,25 +246,25 @@ const updateOrderStatusIntoDB = async (
     );
   }
 
-  if (isOrderExists?.status === 'Delivered') {
+  if (isOrderExists?.orderStatus === 'Delivered') {
     throwAppError(
       'status',
       `The Order is Already Delivered. Can't change status anymore.`,
       StatusCodes.BAD_REQUEST,
     );
   } else if (
-    (isOrderExists?.status === 'Pending' && payload.status === 'Shipped') ||
-    (isOrderExists?.status === 'Pending' && payload.status === 'Delivered') ||
-    (isOrderExists?.status === 'Processing' && payload.status === 'Delivered')
+    (isOrderExists?.orderStatus === 'Pending' && payload.orderStatus === 'Shipped') ||
+    (isOrderExists?.orderStatus === 'Pending' && payload.orderStatus === 'Delivered') ||
+    (isOrderExists?.orderStatus === 'Processing' && payload.orderStatus === 'Delivered')
   ) {
     throwAppError(
       'status',
-      `Invalid Status flow. A ${isOrderExists.status} order can't be ${payload.status} directly. Must follow the sequence: Pending → Processing → Shipped → Delivered.`,
+      `Invalid Status flow. A ${isOrderExists.orderStatus} order can't be ${payload.orderStatus} directly. Must follow the sequence: Pending → Processing → Shipped → Delivered.`,
       StatusCodes.FORBIDDEN,
     );
   } else if (
-    isOrderExists?.status === 'Shipped' &&
-    payload.status === 'Processing'
+    isOrderExists?.orderStatus === 'Shipped' &&
+    payload.orderStatus === 'Processing'
   ) {
     throwAppError(
       'status',

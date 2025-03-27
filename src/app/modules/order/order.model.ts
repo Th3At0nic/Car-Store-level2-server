@@ -12,9 +12,14 @@ const orderSchema = new Schema<TOrder>(
     },
     quantity: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
-    status: {
+    orderStatus: {
       type: String,
-      enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
+      enum: ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'],
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['PAID', 'UNPAID'],
       required: true,
     },
     estimatedDeliveryStart: { type: Date, required: true },

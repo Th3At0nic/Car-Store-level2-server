@@ -50,7 +50,8 @@ const createOrderWithInventoryManagementIntoDB = async (
     const now = new Date();
 
     order.email = userEmail;
-    order.status = 'Pending';
+    order.orderStatus = 'PENDING';
+    order.paymentStatus = 'UNPAID';
     order.totalPrice = Number(car?.price) * Number(order.quantity);
     order.estimatedDeliveryStart = new Date(
       now.getTime() + 2 * 24 * 60 * 60 * 1000,
