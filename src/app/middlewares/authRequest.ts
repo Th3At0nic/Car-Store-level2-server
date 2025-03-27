@@ -47,8 +47,8 @@ export const auth = (...requiredRoles: TUserRole[]) => {
 
       if (!user) {
         throwAppError(
-          'id',
-          `The ${role} with the provided ID: ${userEmail} not found in the system. Please recheck the ID and try again`,
+          'email',
+          `No account found associated with this email address.`,
           StatusCodes.UNAUTHORIZED,
         );
       }

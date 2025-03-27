@@ -15,7 +15,7 @@ const loginUserAuth = async (payload: TLoginUser) => {
   if (!user) {
     throwAppError(
       'email',
-      `The User with the provided email: ${email} not found in the system. Please recheck the email and try again`,
+      `No account found associated with this email address.`,
       StatusCodes.UNAUTHORIZED,
     );
   }
