@@ -48,7 +48,7 @@ export const auth = (...requiredRoles: TUserRole[]) => {
       if (!user) {
         throwAppError(
           'email',
-          `No account found associated with this email address.`,
+          `This Email is not Registered.`,
           StatusCodes.UNAUTHORIZED,
         );
       }
