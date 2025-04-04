@@ -234,7 +234,7 @@ const deleteOrderFromDB = async (orderId: string) => {
 
 const updateOrderStatusIntoDB = async (
   orderId: string,
-  payload: Pick<TOrder, 'status'>,
+  payload: Pick<TOrder, 'orderStatus'>,
 ) => {
   const isOrderExists = await OrderModel.findById(orderId);
 
@@ -246,16 +246,19 @@ const updateOrderStatusIntoDB = async (
     );
   }
 
-  if (isOrderExists?.orderStatus === 'Delivered') {
+  if (isOrderExists?.orderStatus === 'DELIVERED') {
     throwAppError(
       'status',
       `The Order is Already Delivered. Can't change status anymore.`,
       StatusCodes.BAD_REQUEST,
     );
   } else if (
-    (isOrderExists?.orderStatus === 'Pending' && payload.orderStatus === 'Shipped') ||
-    (isOrderExists?.orderStatus === 'Pending' && payload.orderStatus === 'Delivered') ||
-    (isOrderExists?.orderStatus === 'Processing' && payload.orderStatus === 'Delivered')
+    (isOrderExists?.orderStatus === 'PENDING' &&
+      payload.orderStatus === 'SHIPPED') ||
+    (isOrderExists?.orderStatus === 'PENDING' &&
+      payload.orderStatus === 'DELIVERED') ||
+    (isOrderExists?.orderStatus === 'PROCESSING' &&
+      payload.orderStatus === 'DELIVERED')
   ) {
     throwAppError(
       'status',
@@ -263,8 +266,8 @@ const updateOrderStatusIntoDB = async (
       StatusCodes.FORBIDDEN,
     );
   } else if (
-    isOrderExists?.orderStatus === 'Shipped' &&
-    payload.orderStatus === 'Processing'
+    isOrderExists?.orderStatus === 'SHIPPED' &&
+    payload.orderStatus === 'PROCESSING'
   ) {
     throwAppError(
       'status',

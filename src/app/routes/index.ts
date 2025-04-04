@@ -23,6 +23,10 @@ const routeModules = [
     path: '/admin',
     route: AdminRoutes,
   },
+  {
+    path: '/payment',
+    route: AdminRoutes,
+  },
 ];
 
 routeModules.forEach((route) => router.use(route.path, route.route));

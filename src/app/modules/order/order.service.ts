@@ -4,12 +4,15 @@ import { OrderModel } from './order.model';
 import { CarModel } from '../car/car.model';
 import throwAppError from '../../utils/throwAppError';
 import { StatusCodes } from 'http-status-codes';
+import { initiateShurjoPayPayment } from '../payment/payment.utility';
 
 //creating an order to DB
 const createOrderWithInventoryManagementIntoDB = async (
   userEmail: string,
   order: TOrder,
 ) => {
+  let createdOrder = null;
+  let paymentUrl = '';
   const session = await mongoose.startSession(); // creating a session from the mongoose
 
   try {
@@ -49,7 +52,10 @@ const createOrderWithInventoryManagementIntoDB = async (
     //assigning email and status to the order data
     const now = new Date();
 
-    order.email = userEmail;
+    order.customerEmail = userEmail;
+    order.customerAddress = 'something';
+    order.customerName = 'something';
+    order.customerPhone = 'something';
     order.orderStatus = 'PENDING';
     order.paymentStatus = 'UNPAID';
     order.totalPrice = Number(car?.price) * Number(order.quantity);
@@ -64,26 +70,32 @@ const createOrderWithInventoryManagementIntoDB = async (
     //creating a new order in the DB
     const result = await OrderModel.create([order], { session });
 
+    createdOrder = result[0];
+
+    // console.log('result: ', result);
+
+    // console.log('result id: ', result[0]._id.toString());
+
     // committing the transaction to finalize all the changes into the DB
     await session.commitTransaction();
-
-    // finishing the session as the all job is done by session successfully
-    session.endSession();
-
-    //finally returning the result of created order. also inventory management done.
-    return result;
   } catch (err) {
     // if any error occur, abort all the transaction to undo all the changes including the inventory and order
     await session.abortTransaction();
-
-    session.endSession();
 
     throwAppError(
       '',
       `An error occur ordering a car! + ${err}`,
       StatusCodes.INTERNAL_SERVER_ERROR,
     );
+  } finally {
+    session.endSession();
   }
+
+  if (createdOrder) {
+    paymentUrl = await initiateShurjoPayPayment(createdOrder._id.toString());
+  }
+
+  return { order: createdOrder, paymentUrl };
 };
 
 const getMyOrdersFromDB = async (userEmail: string) => {

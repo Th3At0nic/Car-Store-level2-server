@@ -4,7 +4,7 @@ import { TOrder } from './order.interface';
 //creating the order schema bfrom the type Order
 const orderSchema = new Schema<TOrder>(
   {
-    email: { type: String, required: true },
+    customerEmail: { type: String, required: true },
     car: {
       type: Schema.Types.ObjectId,
       ref: 'Car',
@@ -19,11 +19,14 @@ const orderSchema = new Schema<TOrder>(
     },
     paymentStatus: {
       type: String,
-      enum: ['PAID', 'UNPAID'],
+      enum: ['PAID', 'UNPAID', 'FAILED'],
       required: true,
     },
-    estimatedDeliveryStart: { type: Date, required: true },
-    estimatedDeliveryEnd: { type: Date, required: true },
+    estimatedDeliveryStart: { type: Date },
+    estimatedDeliveryEnd: { type: Date },
+    customerName: { type: String, required: true },
+    customerPhone: { type: String, required: true },
+    customerAddress: { type: String, required: true },
   },
   {
     timestamps: true, // shows the create and update time
