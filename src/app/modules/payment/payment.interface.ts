@@ -9,3 +9,22 @@ export type TPayment = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type TShurjoPayRequest = {
+  username: string;
+  password: string;
+  prefix: string;
+  token: string;
+  store_id: string;
+  amount: number;
+  order_id: string;
+  currency: string;
+  customer_name: string;
+  customer_address: string;
+  customer_city: string;
+  customer_phone: string;
+  customer_email?: string;
+  return_url: string;
+  cancel_url: string;
+  client_ip: string;
+};

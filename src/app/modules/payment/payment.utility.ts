@@ -3,25 +3,9 @@ import throwAppError from '../../utils/throwAppError';
 import { OrderModel } from '../order/order.model';
 import config from '../../config';
 import axios from 'axios';
+import { TShurjoPayRequest } from './payment.interface';
 
-type TShurjoPayRequest = {
-  username: string;
-  password: string;
-  prefix: string;
-  token: string;
-  store_id: string;
-  amount: number;
-  order_id: string;
-  currency: string;
-  customer_name: string;
-  customer_address: string;
-  customer_city: string;
-  customer_phone: string;
-  customer_email?: string;
-  return_url: string;
-  cancel_url: string;
-  client_ip: string;
-};
+let cachedToken: string | null = null;
 
 export const initiateShurjoPayPayment = async (
   orderId: string,
@@ -50,22 +34,28 @@ export const initiateShurjoPayPayment = async (
     customer_phone: (order?.customerPhone as string) || '23R2R2',
     customer_email: order?.customerEmail || 'rahat@gmail.com',
 
-    return_url: `${config.sp_return_url}/api/payment/success`,
-    cancel_url: `${config.sp_return_url}/api/payment/cancel`,
+    return_url: `${config.sp_return_url}`,
+    cancel_url: `${config.sp_return_url}`,
     client_ip: '102.324.0.5',
   };
 
+  //retrieving token from the shurjopay with credentials
   const tokenRes = await axios.post(
-    config.sp_token_endpoint as string,
+    `${config.sp_endpoint}/get_token`,
     { username: config.sp_username, password: config.sp_password },
     {
       headers: { 'Content-Type': 'application/json' },
     },
   );
-
+  //extracting for shortcut
   const token = await tokenRes.data.token;
   const executeUrl = await tokenRes.data.execute_url;
 
+  // assigning token to global variable to reuse it
+  cachedToken = token;
+  // console.log('cached token: ', cachedToken);
+
+  //assigning store id and token to paymentData dynamically
   paymentData.store_id = await tokenRes.data.store_id;
   paymentData.token = token;
 
@@ -74,6 +64,8 @@ export const initiateShurjoPayPayment = async (
       Authorization: `Bearer ${token}`,
     },
   });
+
+  // console.log('paymentRes: ', paymentRes.data);
 
   if (!paymentRes.data.checkout_url) {
     throwAppError('', 'Payment initiation failed', StatusCodes.BAD_REQUEST);
@@ -87,4 +79,20 @@ export const initiateShurjoPayPayment = async (
   // };
 
   return paymentRes.data.checkout_url; // Redirect URL for payment
+};
+
+export const verifyShurjopayTransaction = async (spOrderId: string) => {
+  const verificationRes = await axios.post(
+    `${config.sp_endpoint}/verification`,
+    { order_id: spOrderId },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${cachedToken}`,
+      },
+    },
+  );
+
+  // console.log('verifi res uti: ', verificationRes.data);
+  return verificationRes.data;
 };

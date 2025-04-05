@@ -4,27 +4,39 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { paymentServices } from './payment.service';
-import { Result } from 'express-validator';
 
 const getPaymentInfoByTransactionId = catchAsync(async (req, res, next) => {
   const { transactionId } = req.params;
-  const payment =
+  const result =
     await paymentServices.getPaymentByTransactionIdFromDB(transactionId);
 
   const message = 'Payment details retrieved successfully';
-  sendResponse(res, StatusCodes.OK, true, message, Result);
+  sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
 const getPaymentInfoByOrderId = catchAsync(async (req, res, next) => {
   const { transactionId } = req.params;
-  const payment =
+  const result =
     await paymentServices.getPaymentByTransactionIdFromDB(transactionId);
 
   const message = 'Payment details retrieved successfully';
-  sendResponse(res, StatusCodes.OK, true, message, Result);
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
+
+const verifyPayment = catchAsync(async (req, res, next) => {
+  const { order_id } = req.query;
+
+  const result = await paymentServices.verifyPaymentFromShurjopay(
+    order_id as string,
+  );
+
+  const message = 'Payment details retrieved successfully';
+
+  sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
 export const paymentControllers = {
   getPaymentInfoByTransactionId,
   getPaymentInfoByOrderId,
+  verifyPayment,
 };

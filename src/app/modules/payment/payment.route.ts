@@ -7,4 +7,6 @@ router.get('/:transactionId', paymentControllers.getPaymentInfoByTransactionId);
 
 router.get('/:orderId', paymentControllers.getPaymentInfoByOrderId);
 
-export const paymentRoutes = router;
+router.post('/verifyPayment', paymentControllers.verifyPayment);
+
+export const PaymentRoutes = router;

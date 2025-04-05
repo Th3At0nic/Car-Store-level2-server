@@ -53,9 +53,9 @@ const createOrderWithInventoryManagementIntoDB = async (
     const now = new Date();
 
     order.customerEmail = userEmail;
-    order.customerAddress = 'something';
-    order.customerName = 'something';
-    order.customerPhone = 'something';
+    order.customerAddress = 'Satkhira';
+    order.customerName = 'Rahat';
+    order.customerPhone = '01232443434';
     order.orderStatus = 'PENDING';
     order.paymentStatus = 'UNPAID';
     order.totalPrice = Number(car?.price) * Number(order.quantity);

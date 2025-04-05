@@ -1,3 +1,4 @@
+import { verifyShurjopayTransaction } from './payment.utility';
 import { StatusCodes } from 'http-status-codes';
 import throwAppError from '../../utils/throwAppError';
 import { TPayment } from './payment.interface';
@@ -45,8 +46,15 @@ const getPaymentsByOrderIdFromDB = async (orderId: string) => {
   return result;
 };
 
+const verifyPaymentFromShurjopay = async (spOrderId: string) => {
+  const verifyRes = await verifyShurjopayTransaction(spOrderId);
+  console.log('verifyRes from srvice: ', verifyRes);
+  return verifyRes;
+};
+
 export const paymentServices = {
   createPaymentIntoDB,
   getPaymentByTransactionIdFromDB,
   getPaymentsByOrderIdFromDB,
+  verifyPaymentFromShurjopay,
 };
