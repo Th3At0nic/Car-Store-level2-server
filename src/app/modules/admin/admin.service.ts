@@ -254,10 +254,14 @@ const updateOrderStatusIntoDB = async (
     );
   } else if (
     (isOrderExists?.orderStatus === 'PENDING' &&
-      payload.orderStatus === 'SHIPPED') ||
-    (isOrderExists?.orderStatus === 'PENDING' &&
       payload.orderStatus === 'DELIVERED') ||
-    (isOrderExists?.orderStatus === 'PROCESSING' &&
+    (isOrderExists?.orderStatus === 'PENDING' &&
+      payload.orderStatus === 'PROCESSING') ||
+    (isOrderExists?.orderStatus === 'PENDING' &&
+      payload.orderStatus === 'SHIPPED') ||
+    (isOrderExists?.orderStatus === 'CONFIRMED' &&
+      payload.orderStatus === 'SHIPPED') ||
+    (isOrderExists?.orderStatus === 'CONFIRMED' &&
       payload.orderStatus === 'DELIVERED')
   ) {
     throwAppError(
