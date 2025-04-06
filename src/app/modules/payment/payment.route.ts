@@ -3,10 +3,10 @@ import { paymentControllers } from './payment.controller';
 
 const router = Router();
 
-router.get('/:transactionId', paymentControllers.getPaymentInfoByTransactionId);
+// router.get('/:transactionId', paymentControllers.getPaymentInfoByTransactionId);
 
-router.get('/:orderId', paymentControllers.getPaymentInfoByOrderId);
+// router.get('/:orderId', paymentControllers.getPaymentInfoByOrderId);
 
-router.post('/verifyPayment', paymentControllers.verifyPayment);
+router.get('/verifyPayment', paymentControllers.verifyPayment);
 
 export const PaymentRoutes = router;

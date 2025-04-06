@@ -71,13 +71,6 @@ export const initiateShurjoPayPayment = async (
     throwAppError('', 'Payment initiation failed', StatusCodes.BAD_REQUEST);
   }
 
-  // const dataToReturn = {
-  //   checkoutUrl: paymentRes.data.checkout_url,
-  //   amount: paymentRes.data.amount,
-  //   currency: paymentRes.data.currency,
-  //   transactionStatus: paymentRes.data.transactionStatus,
-  // };
-
   return paymentRes.data.checkout_url; // Redirect URL for payment
 };
 

@@ -5,6 +5,7 @@ import { CarModel } from '../car/car.model';
 import throwAppError from '../../utils/throwAppError';
 import { StatusCodes } from 'http-status-codes';
 import { initiateShurjoPayPayment } from '../payment/payment.utility';
+import { UserModel } from '../user/user.model';
 
 //creating an order to DB
 const createOrderWithInventoryManagementIntoDB = async (
@@ -19,6 +20,24 @@ const createOrderWithInventoryManagementIntoDB = async (
     //starting a transaction with the session which allow us to execute multiple opt together, or cancel together.
     session.startTransaction();
 
+    const user = await UserModel.findOne({ email: userEmail });
+
+    if (!user) {
+      throwAppError(
+        'email',
+        'Something Went Wrong. Seems like user with the email is not registered, try again.',
+        StatusCodes.NOT_FOUND,
+      );
+    }
+
+    if (user?.deactivated) {
+      throwAppError(
+        'userAccount',
+        'Your Account is Deactivated by admin. Please contact to Support and activate your acc first to make an order',
+        StatusCodes.FORBIDDEN,
+      );
+    }
+
     // Step 1: Find the car being ordered to check its availability and stock
     const car = await CarModel.findById(order.car).session(session);
 
@@ -30,7 +49,11 @@ const createOrderWithInventoryManagementIntoDB = async (
       );
     }
 
-    if (car!.quantity < order.quantity && car!.quantity >= 1) {
+    if (
+      car!.quantity <= 0 ||
+      car!.inStock === false ||
+      car!.quantity < order.quantity
+    ) {
       throwAppError(
         'quantity',
         `Insufficient stock! Only ${car?.quantity} unit available. But you ordered ${order.quantity} unit`,
@@ -50,22 +73,14 @@ const createOrderWithInventoryManagementIntoDB = async (
     await car?.save({ session });
 
     //assigning email and status to the order data
-    const now = new Date();
 
     order.customerEmail = userEmail;
-    order.customerAddress = 'Satkhira';
-    order.customerName = 'Rahat';
+    order.customerAddress = 'Dhaka';
+    order.customerName = user?.name as string;
     order.customerPhone = '01232443434';
     order.orderStatus = 'PENDING';
     order.paymentStatus = 'UNPAID';
     order.totalPrice = Number(car?.price) * Number(order.quantity);
-    order.estimatedDeliveryStart = new Date(
-      now.getTime() + 2 * 24 * 60 * 60 * 1000,
-    ); // 2 days later of Order placement date
-
-    order.estimatedDeliveryEnd = new Date(
-      now.getTime() + 12 * 24 * 60 * 60 * 1000,
-    ); // 12 days later
 
     //creating a new order in the DB
     const result = await OrderModel.create([order], { session });
