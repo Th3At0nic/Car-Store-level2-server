@@ -20,5 +20,11 @@ router.get(
   OrderController.getMyOrders,
 );
 
+router.get(
+  '/:orderId',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  OrderController.getAnOrder,
+);
+
 //exporting the router
 export const OrderRoutes = router;

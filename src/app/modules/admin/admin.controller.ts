@@ -52,14 +52,6 @@ const getAllOrders = catchAsync(async (req, res, next) => {
   sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
-const getAnOrder = catchAsync(async (req, res, next) => {
-  const { orderId } = req.params;
-  const result = await AdminServices.getAnOrderFromDB(orderId);
-
-  const message = 'Retrieved the Order Successfully';
-  sendResponse(res, StatusCodes.OK, true, message, result);
-});
-
 // processing req of calculation of total revenue
 const calcRevenue = catchAsync(async (req, res, next) => {
   const result = await AdminServices.calcRevenueFromOrders();
@@ -97,7 +89,6 @@ export const AdminControllers = {
   deleteACar,
   deactivateUserByAdmin,
   getAllOrders,
-  getAnOrder,
   calcRevenue,
   getAllUsers,
   deleteOrder,

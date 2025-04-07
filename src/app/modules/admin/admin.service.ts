@@ -134,20 +134,6 @@ const getAllOrdersFromDB = async () => {
   return result;
 };
 
-const getAnOrderFromDB = async (orderId: string) => {
-  const result = await OrderModel.findById(orderId).populate('car');
-
-  if (!result) {
-    throwAppError(
-      'orders',
-      'Order Not Found in the System',
-      StatusCodes.NOT_FOUND,
-    );
-  }
-
-  return result;
-};
-
 //
 //
 // calculating the total revenue from orders
@@ -302,7 +288,6 @@ export const AdminServices = {
   deleteACarFromDB,
   toggleUserStatusByAdminIntoDB,
   getAllOrdersFromDB,
-  getAnOrderFromDB,
   calcRevenueFromOrders,
   getAllUsersFromDB,
   deleteOrderFromDB,

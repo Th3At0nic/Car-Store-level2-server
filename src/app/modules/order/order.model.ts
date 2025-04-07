@@ -19,7 +19,7 @@ const orderSchema = new Schema<TOrder>(
     },
     paymentStatus: {
       type: String,
-      enum: ['PAID', 'UNPAID', 'FAILED'],
+      enum: ['PAID', 'UNPAID', 'PAYMENT FAILED'],
       required: true,
     },
     estimatedDeliveryStart: { type: Date },

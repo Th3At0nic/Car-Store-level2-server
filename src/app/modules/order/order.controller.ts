@@ -34,7 +34,16 @@ const getMyOrders = catchAsync(async (req, res, next) => {
   sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
+const getAnOrder = catchAsync(async (req, res, next) => {
+  const { orderId } = req.params;
+  const result = await OrderService.getAnOrderFromDB(orderId);
+
+  const message = 'Order Details Retrieved Successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
+
 export const OrderController = {
   createOrderWithInventoryManagement,
   getMyOrders,
+  getAnOrder,
 };
