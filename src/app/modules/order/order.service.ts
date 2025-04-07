@@ -87,10 +87,6 @@ const createOrderWithInventoryManagementIntoDB = async (
 
     createdOrder = result[0];
 
-    // console.log('result: ', result);
-
-    // console.log('result id: ', result[0]._id.toString());
-
     // committing the transaction to finalize all the changes into the DB
     await session.commitTransaction();
   } catch (err) {
@@ -114,7 +110,7 @@ const createOrderWithInventoryManagementIntoDB = async (
 };
 
 const getMyOrdersFromDB = async (userEmail: string) => {
-  const result = await OrderModel.find({ email: userEmail });
+  const result = await OrderModel.find({ customerEmail: userEmail });
 
   if (!result.length) {
     throwAppError('', 'Currently You have no Orders', StatusCodes.NOT_FOUND);
@@ -123,7 +119,22 @@ const getMyOrdersFromDB = async (userEmail: string) => {
   return result;
 };
 
+const getAnOrderFromDB = async (orderId: string) => {
+  const result = await OrderModel.findById(orderId).populate('car');
+
+  if (!result) {
+    throwAppError(
+      'orders',
+      'Order Not Found in the System',
+      StatusCodes.NOT_FOUND,
+    );
+  }
+
+  return result;
+};
+
 export const OrderService = {
   createOrderWithInventoryManagementIntoDB,
   getMyOrdersFromDB,
+  getAnOrderFromDB,
 };

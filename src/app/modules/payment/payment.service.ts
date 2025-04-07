@@ -140,6 +140,15 @@ const verifyPaymentFromShurjopay = async (spOrderId: string) => {
     }
   }
 
+  if (
+    response.sp_message === 'Cancel' ||
+    response.sp_message === 'Bank Response Failed'
+  ) {
+    await OrderModel.findByIdAndUpdate(response.customer_order_id, {
+      paymentStatus: 'PAYMENT FAILED',
+    });
+  }
+
   return paymentRes;
 };
 

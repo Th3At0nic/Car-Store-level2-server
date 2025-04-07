@@ -31,7 +31,11 @@ router.put(
   AdminControllers.updateACar,
 );
 
-router.delete('/cars/:carId', auth(USER_ROLE.admin), AdminControllers.deleteACar);
+router.delete(
+  '/cars/:carId',
+  auth(USER_ROLE.admin),
+  AdminControllers.deleteACar,
+);
 
 router.patch(
   '/users/:userId',
@@ -40,12 +44,6 @@ router.patch(
 );
 
 router.get('/orders', auth(USER_ROLE.admin), AdminControllers.getAllOrders);
-
-router.get(
-  '/orders/:orderId',
-  auth(USER_ROLE.admin),
-  AdminControllers.getAnOrder,
-);
 
 router.get('/users', auth(USER_ROLE.admin), AdminControllers.getAllUsers);
 
