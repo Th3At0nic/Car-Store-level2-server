@@ -1,3 +1,4 @@
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { verifyShurjopayTransaction } from './payment.utility';
 import { StatusCodes } from 'http-status-codes';
 import throwAppError from '../../utils/throwAppError';
@@ -5,6 +6,7 @@ import { TPayment } from './payment.interface';
 import { PaymentModel } from './payment.model';
 import { OrderModel } from '../order/order.model';
 import mongoose from 'mongoose';
+import config from '../../config';
 
 const createPaymentIntoDB = async (paymentData: TPayment) => {
   const result = await PaymentModel.create(paymentData);
@@ -20,33 +22,33 @@ const createPaymentIntoDB = async (paymentData: TPayment) => {
   return result;
 };
 
-const getPaymentByTransactionIdFromDB = async (transactionId: string) => {
-  const result = await PaymentModel.findOne({ transactionId });
+// const getPaymentByTransactionIdFromDB = async (transactionId: string) => {
+//   const result = await PaymentModel.findOne({ transactionId });
 
-  if (!result) {
-    throwAppError(
-      '',
-      'No Payment Data found with the transactionId',
-      StatusCodes.NOT_FOUND,
-    );
-  }
+//   if (!result) {
+//     throwAppError(
+//       '',
+//       'No Payment Data found with the transactionId',
+//       StatusCodes.NOT_FOUND,
+//     );
+//   }
 
-  return result;
-};
+//   return result;
+// };
 
-const getPaymentsByOrderIdFromDB = async (orderId: string) => {
-  const result = await PaymentModel.find({ orderId });
+// const getPaymentsByOrderIdFromDB = async (orderId: string) => {
+//   const result = await PaymentModel.find({ orderId });
 
-  if (!result.length) {
-    throwAppError(
-      '',
-      'No Payment Data found with the orderId',
-      StatusCodes.NOT_FOUND,
-    );
-  }
+//   if (!result.length) {
+//     throwAppError(
+//       '',
+//       'No Payment Data found with the orderId',
+//       StatusCodes.NOT_FOUND,
+//     );
+//   }
 
-  return result;
-};
+//   return result;
+// };
 
 const verifyPaymentFromShurjopay = async (spOrderId: string) => {
   const paymentRes = await verifyShurjopayTransaction(spOrderId);
@@ -152,9 +154,28 @@ const verifyPaymentFromShurjopay = async (spOrderId: string) => {
   return paymentRes;
 };
 
+const getMyPaymentHistoryFromDB = async (userToken: string) => {
+  const decoded = jwt.verify(
+    userToken as string,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+
+  const result = await PaymentModel.find({ customerEmail: decoded.userEmail });
+
+  if (!result.length) {
+    throwAppError(
+      'email',
+      'Currently You have no Payment History',
+      StatusCodes.NOT_FOUND,
+    );
+  }
+  return result;
+};
+
 export const paymentServices = {
   createPaymentIntoDB,
-  getPaymentByTransactionIdFromDB,
-  getPaymentsByOrderIdFromDB,
+  // getPaymentByTransactionIdFromDB,
+  // getPaymentsByOrderIdFromDB,
   verifyPaymentFromShurjopay,
+  getMyPaymentHistoryFromDB,
 };

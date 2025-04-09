@@ -238,13 +238,16 @@ const updateOrderStatusIntoDB = async (
       `The Order is Already Delivered. Can't change status anymore.`,
       StatusCodes.BAD_REQUEST,
     );
-  } else if (
-    (isOrderExists?.orderStatus === 'PENDING' &&
+  }
+  if (
+    (isOrderExists?.orderStatus === 'PROCESSING' &&
       payload.orderStatus === 'DELIVERED') ||
     (isOrderExists?.orderStatus === 'PENDING' &&
       payload.orderStatus === 'PROCESSING') ||
     (isOrderExists?.orderStatus === 'PENDING' &&
       payload.orderStatus === 'SHIPPED') ||
+    (isOrderExists?.orderStatus === 'PENDING' &&
+      payload.orderStatus === 'DELIVERED') ||
     (isOrderExists?.orderStatus === 'CONFIRMED' &&
       payload.orderStatus === 'SHIPPED') ||
     (isOrderExists?.orderStatus === 'CONFIRMED' &&
