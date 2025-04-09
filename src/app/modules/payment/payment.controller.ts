@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { paymentServices } from './payment.service';
+import { JwtPayload } from 'jsonwebtoken';
 
 // const getPaymentInfoByTransactionId = catchAsync(async (req, res, next) => {
 //   const { transactionId } = req.params;
@@ -43,8 +44,19 @@ const verifyPayment = catchAsync(async (req, res, next) => {
   sendResponse(res, StatusCodes.OK, true, message, result);
 });
 
+const getMyPaymentHistory = catchAsync(async (req, res, next) => {
+  const token = req.headers.authorization;
+  const result = await paymentServices.getMyPaymentHistoryFromDB(
+    token as string,
+  );
+
+  const message = 'Payment History retrieved successfully';
+  sendResponse(res, StatusCodes.OK, true, message, result);
+});
+
 export const paymentControllers = {
   // getPaymentInfoByTransactionId,
   // getPaymentInfoByOrderId,
   verifyPayment,
+  getMyPaymentHistory,
 };

@@ -5,7 +5,7 @@ const router = Router();
 
 // router.get('/:transactionId', paymentControllers.getPaymentInfoByTransactionId);
 
-// router.get('/:orderId', paymentControllers.getPaymentInfoByOrderId);
+router.get('/history', paymentControllers.getMyPaymentHistory);
 
 router.get('/verifyPayment', paymentControllers.verifyPayment);
 

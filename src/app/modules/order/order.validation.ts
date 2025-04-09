@@ -22,9 +22,9 @@ export const orderValidationSchema = z.object({
 // Schema for validating the structure of an order
 export const updateOrderStatusValidationSchema = z.object({
   body: z.object({
-    status: z.enum(['Processing', 'Shipped', 'Delivered'], {
+    orderStatus: z.enum(['PROCESSING', 'SHIPPED', 'DELIVERED'], {
       errorMap: () => ({
-        message: 'Status must be one of: Processing, Shipped, or Delivered',
+        message: 'Status must be one of: PROCESSING, SHIPPED, or DELIVERED',
       }),
     }),
   }),
