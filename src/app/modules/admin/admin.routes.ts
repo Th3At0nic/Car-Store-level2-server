@@ -40,7 +40,7 @@ router.delete(
 router.patch(
   '/users/:userId',
   auth(USER_ROLE.admin),
-  AdminControllers.deactivateUserByAdmin,
+  AdminControllers.toggleUserStatusByAdmin,
 );
 
 router.get('/orders', auth(USER_ROLE.admin), AdminControllers.getAllOrders);
