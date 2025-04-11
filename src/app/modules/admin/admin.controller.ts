@@ -37,7 +37,7 @@ const deleteACar = catchAsync(async (req, res, next) => {
   sendResponse(res, StatusCodes.OK, true, message, result ? null : result);
 });
 
-const deactivateUserByAdmin = catchAsync(async (req, res, next) => {
+const toggleUserStatusByAdmin = catchAsync(async (req, res, next) => {
   const { userId } = req.params;
   const result = await AdminServices.toggleUserStatusByAdminIntoDB(userId);
   const message = result?.deactivated
@@ -87,7 +87,7 @@ export const AdminControllers = {
   createACar,
   updateACar,
   deleteACar,
-  deactivateUserByAdmin,
+  toggleUserStatusByAdmin,
   getAllOrders,
   calcRevenue,
   getAllUsers,
