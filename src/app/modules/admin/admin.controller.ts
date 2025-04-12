@@ -8,7 +8,7 @@ import catchAsync from '../../utils/catchAsync';
 import { TCar } from '../car/car.interface';
 
 const createACar = catchAsync(async (req, res, next) => {
-  const files = req.files as Express.Multer.File[];
+  const files = req?.files as Express.Multer.File[];
 
   const result = await AdminServices.createACarIntoDB(files, req.body);
   const message = 'Added the Car Successfully!';
@@ -61,7 +61,7 @@ const calcRevenue = catchAsync(async (req, res, next) => {
 });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const result = await AdminServices.getAllUsersFromDB();
+  const result = await AdminServices.getAllUsersFromDB(req.query);
   const message = 'Retrieved All Users Successfully';
 
   sendResponse(res, StatusCodes.OK, true, message, result);
