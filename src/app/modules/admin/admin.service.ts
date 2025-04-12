@@ -7,6 +7,7 @@ import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 import { CarModel } from '../car/car.model';
 import { TCar } from '../car/car.interface';
 import { TOrder } from '../order/order.interface';
+import { QueryBuilder } from '../../builder/QueryBuilder';
 
 //creating a car into the DB
 const createACarIntoDB = async (files: Express.Multer.File[], car: TCar) => {
@@ -190,8 +191,16 @@ const calcRevenueFromOrders = async () => {
   }
 };
 
-const getAllUsersFromDB = async () => {
-  const result = await UserModel.find();
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const searchableFields = ['name', 'email', 'role'];
+  const userQuery = new QueryBuilder(query, UserModel.find())
+    .search(searchableFields)
+    .filter()
+    .paginate()
+    .sortBy()
+    .fields();
+
+  const result = await userQuery.modelQuery;
 
   if (!result.length) {
     throwAppError(
