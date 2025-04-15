@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { v2 as cloudinary } from 'cloudinary';
 // import multer from 'multer';
@@ -54,7 +55,7 @@
 
 // export const upload = multer({ storage: storage });
 
-//  the above code is uploading to disk and then uploading to cloudinary, which doesnt work in vercel. but this below code is upload to memrystorage and direct upload to cloudinary, which works in both vercel and local host
+//  the above code is uploading to disk and then uploading to cloudinary, which doesn't work in vercel. but this below code is upload to memory storage and direct upload to cloudinary, which works in both vercel and local host
 
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
@@ -88,7 +89,7 @@ export const sendImageToCloudinary = async (
 
     return uploadResult;
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    console.log('Cloudinary upload error:', error);
     throw error;
   }
 };
