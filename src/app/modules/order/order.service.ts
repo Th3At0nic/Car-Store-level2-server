@@ -110,7 +110,9 @@ const createOrderWithInventoryManagementIntoDB = async (
 };
 
 const getMyOrdersFromDB = async (userEmail: string) => {
-  const result = await OrderModel.find({ customerEmail: userEmail });
+  const result = await OrderModel.find({ customerEmail: userEmail }).populate(
+    'car',
+  );
 
   if (!result.length) {
     throwAppError('', 'Currently You have no Orders', StatusCodes.NOT_FOUND);
