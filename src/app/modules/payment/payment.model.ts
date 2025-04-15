@@ -125,6 +125,4 @@ const paymentSchema = new Schema<TPayment>(
   },
 );
 
-export const Payment = model('Payment', paymentSchema);
-
 export const PaymentModel = model<TPayment>('Payment', paymentSchema);
