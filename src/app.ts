@@ -7,7 +7,7 @@ const app: Application = express();
 
 app.use(express.json());
 app.use(
-  cors({ origin: 'https://carstore-client.vercel.app', credentials: true }),
+  cors({ origin: 'http://localhost:5173', credentials: true }), //https://carstore-client.vercel.app
 );
 
 app.use('/api', router);
