@@ -90,7 +90,7 @@ const verifyPaymentFromShurjopay = async (spOrderId: string) => {
         spMessage: response.sp_message,
         trxStatus: response.transaction_status ?? null,
         method: response.method,
-        paidAt: new Date(response.date_time),
+        paidAt: new Date(response.date_time + 6 * 60 * 60 * 1000),
       };
 
       const savePaymentData = await PaymentModel.create(
