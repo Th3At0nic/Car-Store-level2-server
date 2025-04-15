@@ -17,9 +17,9 @@ const createACarIntoDB = async (files: Express.Multer.File[], car: TCar) => {
     // Upload each file to Cloudinary
     for (const file of files) {
       const imgName = `${car.brand}${car.model}${car.year}-${Date.now()}`;
-      const imgPath = file.path;
+      // const imgPath = file.path;
 
-      const uploadImgResult = await sendImageToCloudinary(imgPath, imgName);
+      const uploadImgResult = await sendImageToCloudinary(file.buffer, imgName);
       if (uploadImgResult?.secure_url) {
         uploadedImages.push(uploadImgResult.secure_url);
       }
